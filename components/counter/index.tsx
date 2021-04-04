@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Pressable } from 'react-native';
 
-import { useAppSelector, useAppDispatch } from '../../redux/hooks';
+import { Text, View } from 'components/Themed';
+import { useAppSelector, useAppDispatch } from 'hooks/redux';
 import { decrement, increment } from './slice';
-import { Text, View } from '../Themed';
 
 const Counter = () => {
   const count = useAppSelector(state => state.counter.value)
@@ -13,10 +13,10 @@ const Counter = () => {
     <View>
       <Text>{count}</Text>
       <Pressable onPress={() => dispatch(increment())}>
-        <Text>Increment!</Text>
+        <Text>Increment</Text>
       </Pressable>
       <Pressable onPress={() => dispatch(decrement())}>
-        <Text>Decrement!</Text>
+        <Text>Decrement</Text>
       </Pressable>
     </View>
   );
