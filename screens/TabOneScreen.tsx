@@ -1,15 +1,23 @@
-import * as React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet } from 'react-native';
 
-import Counter from 'components/counter';
 import EditScreenInfo from 'components/EditScreenInfo';
 import { Text, View } from 'components/Themed';
+import { useAppDispatch, useAppSelector } from 'hooks/redux';
+import { fetchConversations, selectConversations } from 'features/ConversationList/slice';
 
 export default function TabOneScreen() {
+  // const convos = useAppSelector(selectConversations);
+  const convos = [];
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(fetchConversations("all"));
+  }, []);
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Tab One!</Text>
-      <Counter />
       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
       <EditScreenInfo path="/screens/TabOneScreen.tsx" />
     </View>

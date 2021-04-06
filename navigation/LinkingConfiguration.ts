@@ -1,7 +1,7 @@
-import * as Linking from 'expo-linking';
+import { makeUrl } from 'expo-linking';
 
 export default {
-  prefixes: [Linking.makeUrl('/')],
+  prefixes: [makeUrl('/')],
   config: {
     screens: {
       Root: {
