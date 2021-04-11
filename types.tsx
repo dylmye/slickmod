@@ -1,6 +1,11 @@
 export type RootStackParamList = {
+  Unauth: undefined;
   Root: undefined;
   NotFound: undefined;
+};
+
+export type UnauthStackParamList = {
+  FirstTimeSetupScreen: undefined;
 };
 
 export type BottomTabParamList = {
@@ -26,9 +31,16 @@ export type Subreddit = {
 
 export type Account = {
   username: string;
-  token: string;
-  created_at: string;
+  jwtToken: string;
+  createdUtc: string;
   subreddits: Subreddit[];
+};
+
+export type AccountJwtToken = {
+  username: string;
+  bearerToken: string;
+  refreshToken: string;
+  bearerExpiresUtc: string;
 };
 
 export type ConversationParticipant = {

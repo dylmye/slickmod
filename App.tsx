@@ -4,6 +4,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Provider as PaperProvider } from "react-native-paper";
 import { Provider as ReduxProvider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
+import AppLoading from 'expo-app-loading';
 
 import useCachedResources from "hooks/useCachedResources";
 import useColorScheme from "hooks/useColorScheme";
@@ -19,7 +20,7 @@ export default function App() {
   } else {
     return (
       <ReduxProvider store={store}>
-        <PersistGate loading={null} persistor={persistor}>
+        <PersistGate loading={<AppLoading />} persistor={persistor}>
           <SafeAreaProvider>
             <PaperProvider>
               <Navigation colorScheme={colorScheme} />

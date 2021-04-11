@@ -31,6 +31,6 @@ export const accountsSlice = createSlice({
 
 export const { addAccount, removeAccount } = accountsSlice.actions;
 
-export const selectAccounts = (state: RootState) => state.main.accounts.list;
+export const selectAccounts = (state: RootState) => state.accounts.list;
 
 export default accountsSlice.reducer;
