@@ -7,7 +7,7 @@ export const DISCOVERY: DiscoveryDocument = {
   tokenEndpoint: 'https://www.reddit.com/api/v1/access_token',
 };
 
-export const CLIENT_ID: string = Constants.manifest.extra.redditClientId;
+export const CLIENT_ID: string = Constants.manifest.extra?.redditClientId;
 
 // export const CALLBACK_URL: string = Constants.manifest.extra.oauthCallbackUrl;
 

@@ -34,7 +34,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     "ios"
   ],
   "extra": {
-    "redditClientId": process.env.REACT_NATIVE_REDDIT_CLIENT_ID,
-    // "oauthCallbackUrl": process.env.REACT_NATIVE_OAUTH_CALLBACK_URL
+    "redditClientId": "QTDDA2QX_tQfaA",
+    "oauthCallbackUrl": process.env.REACT_NATIVE_OAUTH_CALLBACK_URL
   },
 });
