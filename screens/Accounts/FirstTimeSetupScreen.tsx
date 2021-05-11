@@ -25,10 +25,13 @@ const FirstTimeSetupScreen = () => {
       const { code } = response.params;
       console.log(code);
     } else {
-      // @ts-ignore
-      const t = JSON.parse(response);
-      response?.type && console.log(JSON.stringify(response));
-      request?.state && console.log(request.state, t?.params.state || "nothing");
+      if (typeof response === "object") {
+        console.log(response);
+      } else {
+        const t = JSON.parse(response as string);
+        t?.type && console.log(JSON.stringify(t));
+        t?.state && console.log(t.state, t?.params.state || "nothing");
+      }
     }
   }, [response]);
 
