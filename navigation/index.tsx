@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   NavigationContainer,
   DefaultTheme,
@@ -6,25 +6,23 @@ import {
 } from "@react-navigation/native";
 import { createNativeStackNavigator } from "react-native-screens/native-stack";
 import { ColorSchemeName } from "react-native";
-import { enableScreens } from "react-native-screens";
-import AppLoading from "expo-app-loading";
 
 import NotFoundScreen from "screens/NotFoundScreen";
 import { RootStackParamList } from "types";
-import { useAppDispatch, useAppSelector } from "hooks/redux";
+import { useAppSelector } from "hooks/redux";
 import UnauthNavigator from "./UnauthNavigator";
 import BottomTabNavigator from "./BottomTabNavigator";
 import LinkingConfiguration from "./LinkingConfiguration";
 import { selectAccounts } from "features/Accounts/slice";
 
-// see: https://reactnavigation.org/docs/react-native-screens
-enableScreens();
+// this project uses react-native-screens,which doesn't
+// need setup. see more here:
+// https://reactnavigation.org/docs/react-native-screens
 
 const Navigation = ({ colorScheme }: { colorScheme: ColorSchemeName }) => (
   <NavigationContainer
     linking={LinkingConfiguration}
-    theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-  >
+    theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
     <RootNavigator />
   </NavigationContainer>
 );

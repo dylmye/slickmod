@@ -1,29 +1,31 @@
-import { makeUrl } from 'expo-linking';
+import { LinkingOptions } from "@react-navigation/native";
 
-export default {
-  prefixes: [makeUrl('/')],
+const config: LinkingOptions = {
+  prefixes: ["slickmod://"],
   config: {
     screens: {
       Root: {
         screens: {
           TabOne: {
             screens: {
-              TabOneScreen: 'one',
+              TabOneScreen: "one",
             },
           },
           TabTwo: {
             screens: {
-              TabTwoScreen: 'two',
+              TabTwoScreen: "two",
             },
           },
         },
       },
       Unauth: {
         screens: {
-          FirstTimeSetupScreen: 'firstTimeSetup'
-        }
+          FirstTimeSetupScreen: "firstTimeSetup",
+        },
       },
-      NotFound: '*',
+      NotFound: "*",
     },
   },
 };
+
+export default config;

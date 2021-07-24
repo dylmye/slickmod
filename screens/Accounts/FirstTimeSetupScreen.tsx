@@ -1,41 +1,35 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
-import { makeRedirectUri, ResponseType, useAuthRequest } from "expo-auth-session";
 
 import { Text, View } from "components/Themed";
 import { Button } from "react-native-paper";
 import { DISCOVERY, CLIENT_ID, SCOPES } from "oauthConfig";
+import { AuthConfiguration, authorize } from "react-native-app-auth";
+import { encode } from "base-64";
 
 const FirstTimeSetupScreen = () => {
-  const [request, response, promptAsync] = useAuthRequest(
-    {
-      responseType: ResponseType.Token,
-      clientId: CLIENT_ID,
-      scopes: SCOPES,
-      redirectUri: makeRedirectUri({
-        native: "slickmod://unauth/firstTimeSetup"
-      }),
+  // const config: OAuthProps = {
+  //   scopes: SCOPES,
+  //   clientId: CLIENT_ID,
+  //   serviceConfiguration: {
+  //     ...DISCOVERY
+  //   },
+  //   issuer: 'https://www.reddit.com/api',
+  //   redirectUrl: "exp://192.168.1.105:19000"
+  // };
+
+  const config: AuthConfiguration = {
+    redirectUrl: createURL('unauth/firstTimeSetup'),
+    clientId: CLIENT_ID,
+    clientSecret: '', // iOS workaround
+    scopes: SCOPES,
+    serviceConfiguration: DISCOVERY,
+    customHeaders: {
+      token: {
+        Authorization: `Basic ${encode(CLIENT_ID)}:`,
+      },
     },
-    DISCOVERY
-  );
-
-  useEffect(() => {
-    if (!response) return;
-    if (response?.type === "success") {
-      const { code } = response.params;
-      console.log(code);
-    } else {
-      if (typeof response === "object") {
-        console.log(response);
-      } else {
-        const t = JSON.parse(response as string);
-        t?.type && console.log(JSON.stringify(t));
-        t?.state && console.log(t.state, t?.params.state || "nothing");
-      }
-    }
-  }, [response]);
-
-  console.log(CLIENT_ID);
+  };
 
   return (
     <View style={styles.container}>
@@ -47,10 +41,10 @@ const FirstTimeSetupScreen = () => {
         can access your modmail.
       </Text>
       <Button
-        disabled={!request}
         mode="contained"
-        onPress={() => {
-          promptAsync();
+        onPress={async () => {
+          const authState = await authorize(config);
+          console.log(authState);
         }}
       >
         Sign in with Reddit

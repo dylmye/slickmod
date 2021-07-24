@@ -1,34 +1,38 @@
-import { StatusBar } from "expo-status-bar";
 import React from "react";
+import { StatusBar, useColorScheme } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Provider as PaperProvider } from "react-native-paper";
 import { Provider as ReduxProvider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
-import AppLoading from 'expo-app-loading';
+import { Colors } from "react-native/Libraries/NewAppScreen";
 
-import useCachedResources from "hooks/useCachedResources";
-import useColorScheme from "hooks/useColorScheme";
-import Navigation from "./navigation";
 import { store, persistor } from "./store";
+import Navigation from "./navigation";
 
-export default function App() {
-  const isLoadingComplete = useCachedResources();
-  const colorScheme = useColorScheme();
+const App = () => {
+  const colourScheme = useColorScheme();
+  const isDarkMode = useColorScheme() === "dark";
 
-  if (!isLoadingComplete) {
-    return null;
-  } else {
-    return (
-      <ReduxProvider store={store}>
-        <PersistGate loading={<AppLoading />} persistor={persistor}>
-          <SafeAreaProvider>
-            <PaperProvider>
-              <Navigation colorScheme={colorScheme} />
-              <StatusBar />
-            </PaperProvider>
-          </SafeAreaProvider>
-        </PersistGate>
-      </ReduxProvider>
-    );
-  }
-}
+  const backgroundStyle = {
+    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+  };
+
+  return (
+    <ReduxProvider store={store}>
+      <PersistGate persistor={persistor}>
+        <SafeAreaProvider style={backgroundStyle}>
+          <PaperProvider>
+            <Navigation colorScheme={colourScheme} />
+            <StatusBar
+              backgroundColor="#61dafb"
+              barStyle="light-content"
+              hidden={false}
+            />
+          </PaperProvider>
+        </SafeAreaProvider>
+      </PersistGate>
+    </ReduxProvider>
+  );
+};
+
+export default App;

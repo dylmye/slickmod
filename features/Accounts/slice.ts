@@ -2,10 +2,10 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "store";
 import { Account } from "types";
 
-const ACTIONS = {
-  "loadSubredditsForAccount": "accounts/loadSubreddits",
-  "addAccount": "accounts/addAddcount",
-  "removeAccount": "accounts/removeAccount",
+export const ACTIONS = {
+  loadSubredditsForAccount: "accounts/loadSubreddits",
+  addAccount: "accounts/addAddcount",
+  removeAccount: "accounts/removeAccount",
 };
 
 interface AccountState {
@@ -24,7 +24,9 @@ export const accountsSlice = createSlice({
       state.list.push(action.payload);
     },
     removeAccount: (state, action: PayloadAction<string>) => {
-      state.list = state.list.filter(({ username }) => username !== action.payload);
+      state.list = state.list.filter(
+        ({ username }) => username !== action.payload,
+      );
     },
   },
 });

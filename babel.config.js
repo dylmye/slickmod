@@ -1,29 +1,9 @@
-module.exports = function (api) {
-  api.cache(true);
-  return {
-    presets: ["babel-preset-expo"],
-    env: {
-      production: {
-        plugins: ['react-native-paper/babel'],
-      },
+module.exports = {
+  presets: ["module:metro-react-native-babel-preset"],
+  plugins: [["module:react-native-dotenv"]],
+  env: {
+    production: {
+      plugins: ["react-native-paper/babel"],
     },
-    plugins: [
-      [
-        "module-resolver",
-        {
-          root: ["./"],
-          alias: {
-            assets: "./assets",
-            components: "./components",
-            constants: "./constants",
-            hooks: "./hooks",
-            navigation: "./navigation",
-            screens: "./screens",
-          },
-          extensions: [".js", ".ts"],
-          stripExtensions: [".js", ".ts", ".json"],
-        },
-      ],
-    ],
-  };
+  },
 };
