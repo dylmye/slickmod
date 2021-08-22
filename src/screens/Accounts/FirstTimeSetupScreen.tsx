@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { StyleSheet } from "react-native";
 
 import { Text, View } from "components/Themed";
 import { Button } from "react-native-paper";
-import { DISCOVERY, CLIENT_ID, SCOPES } from "oauthConfig";
-import { AuthConfiguration, authorize } from "react-native-app-auth";
-import { encode } from "base-64";
+// import { DISCOVERY, CLIENT_ID, SCOPES } from "oauthConfig";
+// import { AuthConfiguration, authorize } from "react-native-app-auth";
+// import { encode } from "base-64";
 
 const FirstTimeSetupScreen = () => {
   // const config: OAuthProps = {
@@ -18,18 +18,18 @@ const FirstTimeSetupScreen = () => {
   //   redirectUrl: "exp://192.168.1.105:19000"
   // };
 
-  const config: AuthConfiguration = {
-    redirectUrl: createURL('unauth/firstTimeSetup'),
-    clientId: CLIENT_ID,
-    clientSecret: '', // iOS workaround
-    scopes: SCOPES,
-    serviceConfiguration: DISCOVERY,
-    customHeaders: {
-      token: {
-        Authorization: `Basic ${encode(CLIENT_ID)}:`,
-      },
-    },
-  };
+  // const config: AuthConfiguration = {
+  //   redirectUrl: createURL("unauth/firstTimeSetup"),
+  //   clientId: CLIENT_ID,
+  //   clientSecret: "", // iOS workaround
+  //   scopes: SCOPES,
+  //   serviceConfiguration: DISCOVERY,
+  //   customHeaders: {
+  //     token: {
+  //       Authorization: `Basic ${encode(CLIENT_ID)}:`,
+  //     },
+  //   },
+  // };
 
   return (
     <View style={styles.container}>
@@ -43,10 +43,9 @@ const FirstTimeSetupScreen = () => {
       <Button
         mode="contained"
         onPress={async () => {
-          const authState = await authorize(config);
-          console.log(authState);
-        }}
-      >
+          // const authState = await authorize(config);
+          // console.log(authState);
+        }}>
         Sign in with Reddit
       </Button>
     </View>

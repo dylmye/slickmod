@@ -3,15 +3,12 @@ import { StyleSheet } from "react-native";
 
 import EditScreenInfo from "components/EditScreenInfo";
 import { Text, View } from "components/Themed";
-import { useAppDispatch, useAppSelector } from "hooks/redux";
-import {
-  fetchConversations,
-  selectConversations,
-} from "features/ConversationList/slice";
+import { useAppDispatch } from "hooks/redux";
+import { fetchConversations } from "features/ConversationList/slice";
 
 export default function TabOneScreen() {
   // const convos = useAppSelector(selectConversations);
-  const convos = [];
+  // const convos = [];
   const dispatch = useAppDispatch();
 
   useEffect(() => {

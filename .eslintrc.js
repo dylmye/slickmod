@@ -1,6 +1,8 @@
 module.exports = {
   root: true,
-  extends: "@react-native-community",
+  parser: "@typescript-eslint/parser",
+  extends: ["@react-native-community", "plugin:@typescript-eslint/recommended"],
+  plugins: ["@typescript-eslint"],
   rules: {
     quotes: [
       "error",
@@ -10,5 +12,9 @@ module.exports = {
         allowTemplateLiterals: true,
       },
     ],
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": "warn",
+    "react-hooks/exhaustive-deps": "off",
+    "@typescript-eslint/explicit-module-boundary-types": "off",
   },
 };

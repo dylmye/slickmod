@@ -44,6 +44,7 @@ function TabBarIcon(props: {
   name: ComponentProps<typeof Icon>["name"];
   color: string;
 }) {
+  // eslint-disable-next-line react-native/no-inline-styles
   return <Icon size={30} style={{ marginBottom: -3 }} {...props} />;
 }
 

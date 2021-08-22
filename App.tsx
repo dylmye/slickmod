@@ -6,8 +6,8 @@ import { Provider as ReduxProvider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { Colors } from "react-native/Libraries/NewAppScreen";
 
-import { store, persistor } from "./store";
-import Navigation from "./navigation";
+import { store, persistor } from "store";
+import Navigation from "navigation";
 
 const App = () => {
   const colourScheme = useColorScheme();
