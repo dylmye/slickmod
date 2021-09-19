@@ -46,12 +46,21 @@ const rootReducer = persistReducer(
 
 export const store = configureStore({
   reducer: rootReducer,
-  middleware: getDefaultMiddleware =>
-    getDefaultMiddleware({
+  middleware: getDefaultMiddleware => {
+    let middleware = getDefaultMiddleware({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    }),
+    });
+
+    if (__DEV__) {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const reduxFlipperMiddleware = require("redux-flipper").default;
+      middleware = middleware.concat(reduxFlipperMiddleware());
+    }
+
+    return middleware;
+  },
 });
 
 export const persistor = persistStore(store);

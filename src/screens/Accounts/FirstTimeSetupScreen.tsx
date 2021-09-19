@@ -1,35 +1,44 @@
 import React from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, TextStyle, ViewStyle } from "react-native";
 
 import { Text, View } from "components/Themed";
 import { Button } from "react-native-paper";
-// import { DISCOVERY, CLIENT_ID, SCOPES } from "oauthConfig";
-// import { AuthConfiguration, authorize } from "react-native-app-auth";
-// import { encode } from "base-64";
+import { authorize } from "react-native-app-auth";
+import config from "./config";
+import {
+  addAccount,
+  fetchAccountDetails,
+  fetchAccountSubreddits,
+} from "features/Accounts/slice";
+import { useDispatch } from "react-redux";
+
+interface Styles {
+  container: ViewStyle;
+  title: TextStyle;
+}
 
 const FirstTimeSetupScreen = () => {
-  // const config: OAuthProps = {
-  //   scopes: SCOPES,
-  //   clientId: CLIENT_ID,
-  //   serviceConfiguration: {
-  //     ...DISCOVERY
-  //   },
-  //   issuer: 'https://www.reddit.com/api',
-  //   redirectUrl: "exp://192.168.1.105:19000"
-  // };
+  const dispatch = useDispatch();
 
-  // const config: AuthConfiguration = {
-  //   redirectUrl: createURL("unauth/firstTimeSetup"),
-  //   clientId: CLIENT_ID,
-  //   clientSecret: "", // iOS workaround
-  //   scopes: SCOPES,
-  //   serviceConfiguration: DISCOVERY,
-  //   customHeaders: {
-  //     token: {
-  //       Authorization: `Basic ${encode(CLIENT_ID)}:`,
-  //     },
-  //   },
-  // };
+  const onSignIn = async () => {
+    const authState = await authorize(config);
+    if (authState?.accessToken) {
+      const { accessToken, refreshToken, accessTokenExpirationDate } =
+        authState;
+      dispatch(
+        addAccount({
+          bearerToken: accessToken,
+          refreshToken,
+          bearerExpiresUtc: accessTokenExpirationDate,
+        }),
+      );
+      dispatch(fetchAccountDetails());
+      dispatch(fetchAccountSubreddits());
+      return;
+    }
+    console.error("Malformed Auth State", authState);
+    return;
+  };
 
   return (
     <View style={styles.container}>
@@ -40,19 +49,14 @@ const FirstTimeSetupScreen = () => {
         Click the button below to log in securely. Once you're logged in, you
         can access your modmail.
       </Text>
-      <Button
-        mode="contained"
-        onPress={async () => {
-          // const authState = await authorize(config);
-          // console.log(authState);
-        }}>
+      <Button mode="contained" onPress={onSignIn}>
         Sign in with Reddit
       </Button>
     </View>
   );
 };
 
-const styles = StyleSheet.create({
+const styles: Styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",

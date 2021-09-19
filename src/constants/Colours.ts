@@ -1,20 +1,21 @@
-const tintColorLight = "#2f95dc";
-const tintColorDark = "#fff";
+const tintColourLight = "#2f95dc";
+const tintColourDark = "#fff";
+const tintColourBrand = "#7193ff";
 
 const colours: Record<string, any> = {
   light: {
     text: "#000",
     background: "#fff",
-    tint: tintColorLight,
+    tint: tintColourLight,
     tabIconDefault: "#ccc",
-    tabIconSelected: tintColorLight,
+    tabIconSelected: tintColourLight,
   },
   dark: {
     text: "#fff",
     background: "#000",
-    tint: tintColorDark,
+    tint: tintColourDark,
     tabIconDefault: "#ccc",
-    tabIconSelected: tintColorDark,
+    tabIconSelected: tintColourDark,
   },
 };
 

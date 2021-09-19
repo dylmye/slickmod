@@ -23,25 +23,26 @@ export type TabTwoParamList = {
 
 export type Subreddit = {
   name: string;
-  keyColor?: string;
+  keyColor: string | null;
   subscribers: number;
   id: string;
-  icon: string;
+  icon: string | null;
 };
 
-export type Account = {
-  username: string;
-  jwtToken: string;
-  createdUtc: string;
-  subreddits: Subreddit[];
-};
-
-export type AccountJwtToken = {
-  username: string;
+export interface Account {
+  username?: string;
   bearerToken: string;
   refreshToken: string;
   bearerExpiresUtc: string;
-};
+  createdUtc: string;
+  subreddits?: Subreddit[];
+}
+
+export interface TempAuthAccount {
+  bearerToken: string;
+  refreshToken: string;
+  bearerExpiresUtc: string;
+}
 
 export type ConversationParticipant = {
   isMod: boolean;
