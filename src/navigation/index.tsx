@@ -4,16 +4,19 @@ import {
   DefaultTheme,
   DarkTheme,
 } from "@react-navigation/native";
-import { createNativeStackNavigator } from "react-native-screens/native-stack";
+import {
+  createNativeStackNavigator,
+  NativeStackNavigationOptions,
+} from "react-native-screens/native-stack";
 import { ColorSchemeName } from "react-native";
 
 import NotFoundScreen from "screens/NotFoundScreen";
 import { Account, RootStackParamList } from "types";
 import { useAppSelector } from "hooks/redux";
 import UnauthNavigator from "./UnauthNavigator";
-import BottomTabNavigator from "./BottomTabNavigator";
 import LinkingConfiguration from "./LinkingConfiguration";
 import { getAccounts } from "features/Accounts/slice";
+import MainNavigator from "./MainNavigator";
 
 // this project uses react-native-screens,which doesn't
 // need setup. see more here:
@@ -36,12 +39,16 @@ const RootNavigator = () => {
     return !!Object.keys(accounts ?? {}).length;
   }, [accounts]);
 
+  const screenOpts: NativeStackNavigationOptions = {
+    headerShown: false,
+  };
+
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator screenOptions={screenOpts}>
       {!isLoggedIn ? (
         <Stack.Screen name="Unauth" component={UnauthNavigator} />
       ) : (
-        <Stack.Screen name="Root" component={BottomTabNavigator} />
+        <Stack.Screen name="Main" component={MainNavigator} />
       )}
       <Stack.Screen
         name="NotFound"

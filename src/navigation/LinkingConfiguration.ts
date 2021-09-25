@@ -4,18 +4,11 @@ const config: LinkingOptions = {
   prefixes: ["slickmod://"],
   config: {
     screens: {
-      Root: {
+      Main: {
         screens: {
-          TabOne: {
-            screens: {
-              TabOneScreen: "one",
-            },
-          },
-          TabTwo: {
-            screens: {
-              TabTwoScreen: "two",
-            },
-          },
+          Conversations: "home",
+          Conversation: "conversation/:id",
+          Settings: "settings",
         },
       },
       Unauth: {

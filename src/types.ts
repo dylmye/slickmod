@@ -1,6 +1,10 @@
+import { AxiosRequestConfig, Method } from "axios";
+
+// navigation
+
 export type RootStackParamList = {
   Unauth: undefined;
-  Root: undefined;
+  Main: undefined;
   NotFound: undefined;
 };
 
@@ -8,18 +12,13 @@ export type UnauthStackParamList = {
   FirstTimeSetupScreen: undefined;
 };
 
-export type BottomTabParamList = {
-  TabOne: undefined;
-  TabTwo: undefined;
+export type MainStackParamList = {
+  Conversations: undefined;
+  Conversation: undefined;
+  Settings: undefined;
 };
 
-export type TabOneParamList = {
-  TabOneScreen: undefined;
-};
-
-export type TabTwoParamList = {
-  TabTwoScreen: undefined;
-};
+// core objects
 
 export type Subreddit = {
   name: string;
@@ -38,54 +37,44 @@ export interface Account {
   subreddits?: Subreddit[];
 }
 
+export type Conversation = {
+  id: string;
+  author: string;
+  subject: string;
+  internal: boolean;
+  highlighted: boolean;
+  messageSnippet: string | null;
+  lastUpdated: string | null;
+};
+
+// authentication, api infra
+
 export interface TempAuthAccount {
   bearerToken: string;
   refreshToken: string;
   bearerExpiresUtc: string;
 }
 
-export type ConversationParticipant = {
-  isMod: boolean;
-  isAdmin: boolean;
-  name: string;
-  isOp: boolean;
-  isParticipant: boolean;
-  isApproved: boolean;
-  id: number | string;
-  isDeleted: boolean;
-};
-
-export type ObjectIdItem = {
+export interface RefreshAuthAccount extends TempAuthAccount {
   id: string;
-  key: string;
+}
+
+export interface ApiRequestConfig {
+  bearer: string;
+  method?: Method;
+  version?: string | null;
+  extraHeaders?: Record<string, string>;
+  params?: URLSearchParams | null;
+  data?: any;
+  skipAuthRefresh?: boolean;
+}
+
+export interface SlickmodAxiosRequestConfig extends AxiosRequestConfig {
+  skipAuthRefresh?: boolean;
 };
 
-export type ConversationOwner = {
-  displayName: string;
-  type: string;
-  id: string;
-};
-
-export type Conversation = {
-  isAuto: boolean;
-  participant?: ConversationParticipant;
-  objIds: ObjectIdItem[];
-  isRepliable: boolean;
-  lastUserUpdate?: string;
-  isInternal: boolean;
-  lastModUpdate?: string;
-  authors: ConversationParticipant[];
-  lastUpdated?: string;
-  legacyFirstMessageId?: string;
-  state: number;
-  lastUnread?: string;
-  owner: ConversationOwner;
-  subject?: string;
-  id: string;
-  isHighlighted: boolean;
-  numMessages: number;
-};
-
-export interface ConversationDict {
-  [key: string]: Conversation[];
+export interface RequestObject {
+  path: string;
+  config?: SlickmodAxiosRequestConfig;
+  onError?: ({ error: string }: any) => any,
 }

@@ -17,6 +17,7 @@
     "@react-navigation/stack": "^5.14.5",
     "@reduxjs/toolkit": "^1.6.1",
     "axios": "^0.21.4",
+    "axios-auth-refresh": "^3.2.0",
     "base-64": "^1.0.0",
     "react": "17.0.2",
     "react-native": "0.65.1",

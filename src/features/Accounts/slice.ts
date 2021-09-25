@@ -1,21 +1,14 @@
 import {
-  createAsyncThunk,
   createSlice,
+  createSelector,
   PayloadAction,
   current,
 } from "@reduxjs/toolkit";
-import axios, { AxiosError } from "axios";
 import { RootState } from "store";
-import { Account, Subreddit, TempAuthAccount } from "types";
-import { config } from "api/api";
+import { Account, RefreshAuthAccount, Subreddit, TempAuthAccount } from "types";
+import { attemptRequestThunk } from "api/api";
 import { MeResponse, ModSubredditListResponse } from "api/responses";
 import { GET_REDDIT_ME_INFO, GET_REDDIT_MOD_SRS } from "api/actionTypes";
-
-export const ACTIONS = {
-  loadSubredditsForAccount: "accounts/loadSubreddits",
-  addAccount: "accounts/addAddcount",
-  removeAccount: "accounts/removeAccount",
-};
 
 interface AccountState {
   list: Record<string, Account>;
@@ -29,44 +22,17 @@ const initialState: AccountState = {
   listLoading: false,
 };
 
-export const fetchAccountDetails = createAsyncThunk(
+export const fetchAccountDetails = attemptRequestThunk<MeResponse>(
   GET_REDDIT_ME_INFO,
-  async (_, { getState, rejectWithValue }) => {
-    const { accounts } = getState() as { accounts: AccountState };
-    if (!accounts.activeUserId) {
-      return rejectWithValue({ error: "No active user ID available" });
-    }
-    const active = accounts.list[accounts.activeUserId];
-    try {
-      const res = await axios.get<MeResponse>("me", config(active.bearerToken));
-      return res.data;
-    } catch (error) {
-      const { message } = error as AxiosError;
-      return rejectWithValue({ error: message });
-    }
-  },
+  { path: "me" },
 );
 
-export const fetchAccountSubreddits = createAsyncThunk(
-  GET_REDDIT_MOD_SRS,
-  async (id: string, { getState, rejectWithValue }) => {
-    const { accounts } = getState() as { accounts: AccountState };
-    if (!accounts.activeUserId) {
-      return rejectWithValue({ error: "No active user ID available" });
-    }
-    const active = accounts.list[id ?? accounts.activeUserId];
-    try {
-      const res = await axios.get<ModSubredditListResponse>(
-        "mod/conversations/subreddits",
-        config(active.bearerToken, "GET", null),
-      );
-      return res.data;
-    } catch (error) {
-      const { message } = error as AxiosError;
-      return rejectWithValue({ error: message });
-    }
-  },
-);
+export const fetchAccountSubreddits =
+  attemptRequestThunk<ModSubredditListResponse>(
+    GET_REDDIT_MOD_SRS,
+    { path: "mod/conversations/subreddits" },
+    { version: null },
+  );
 
 export const accountsSlice = createSlice({
   name: "slickmod:accounts",
@@ -78,6 +44,13 @@ export const accountsSlice = createSlice({
         createdUtc: new Date().toISOString(),
       };
       state.activeUserId = "temp";
+    },
+    updateAccountAuth: (state, action: PayloadAction<RefreshAuthAccount>) => {
+      const { id, ...updatedAuth } = action.payload;
+      state.list[id] = {
+        ...state.list[id],
+        ...updatedAuth,
+      };
     },
     removeAccount: (state, action: PayloadAction<string>) => {
       delete state.list[action.payload];
@@ -139,11 +112,24 @@ export const accountsSlice = createSlice({
 
         const active = state.list[state.activeUserId as string];
         active.subreddits = subreddits;
-      });
+        state.listLoading = false;
+      })
+      .addCase(
+        fetchAccountSubreddits.rejected,
+        (state, { payload, error, meta }) => {
+          state.listLoading = false;
+
+          const message: string = (payload as any)?.error ?? error?.message;
+          console.error(
+            message || `unknown error for request ${meta?.requestId}`,
+          );
+        },
+      );
   },
 });
 
-export const { addAccount, removeAccount } = accountsSlice.actions;
+export const { addAccount, removeAccount, updateAccountAuth } =
+  accountsSlice.actions;
 
 export const accountSelector = (state: RootState, props?: any) => ({
   list: state.accounts.list as Record<string, Account>,
@@ -151,5 +137,16 @@ export const accountSelector = (state: RootState, props?: any) => ({
 });
 
 export const getAccounts = (state: RootState) => state.accounts.list;
+
+export const getAccountsRoot = (state: RootState) => state.accounts;
+
+export const getActiveAccount = createSelector<
+  RootState,
+  AccountState,
+  Account
+>(getAccountsRoot, ({ list, activeUserId }) => list[activeUserId as string]);
+
+export const getActiveAccountId = (state: RootState): string | null =>
+  state.accounts.activeUserId;
 
 export default accountsSlice.reducer;
