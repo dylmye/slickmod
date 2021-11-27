@@ -1,37 +1,53 @@
-import { createSlice, createSelector } from "@reduxjs/toolkit";
+import { createSlice, createSelector, PayloadAction } from "@reduxjs/toolkit";
 import { GET_REDDIT_MOD_CONVERSATIONS } from "api/actionTypes";
 import { attemptRequestThunk } from "api/api";
 import { ModConversationsResponse } from "api/responses";
 import type { RootState } from "store";
 import { Conversation } from "types";
 import createSnippet from "utils/createSnippet";
+import { ModConversationsFilters } from "./types";
 
 interface ConvoState {
   list: Conversation[];
   lastKey: string | null;
   listLoading: boolean;
+  listFilters: ModConversationsFilters;
 }
 
 const initialState: ConvoState = {
   list: [],
   lastKey: null,
   listLoading: false,
+  listFilters: {},
 };
 
 export const fetchConversations = attemptRequestThunk<ModConversationsResponse>(
   GET_REDDIT_MOD_CONVERSATIONS,
   { path: "mod/conversations" },
-  { version: null },
+  (_, state) => ({
+    version: null,
+    params: state.main?.conversations?.listFilters,
+  }),
 );
 
 export const conversationsSlice = createSlice({
   name: "conversations",
   initialState,
   reducers: {
-    clearAllMessages: (state, _) => {
+    clearAllConversations: state => {
       state.list = initialState.list;
       state.lastKey = initialState.lastKey;
       state.listLoading = initialState.listLoading;
+      state.listFilters = initialState.listFilters;
+    },
+    updateFilters: (
+      state,
+      { payload }: PayloadAction<Partial<ModConversationsFilters>>,
+    ) => {
+      state.listFilters = {
+        ...state.listFilters,
+        ...payload,
+      };
     },
   },
   extraReducers: builder => {
@@ -58,14 +74,18 @@ export const conversationsSlice = createSlice({
           }));
 
         state.list = [...state.list, ...mappedResults];
-
+        const lastKey = state.list[state.list.length - 1].id ?? state.lastKey;
+        state.lastKey = lastKey;
+        state.listFilters = {
+          ...(state.listFilters ?? {}),
+          after: lastKey,
+        };
         state.listLoading = false;
       })
       .addCase(
         fetchConversations.rejected,
         (state, { payload, error, meta }) => {
           state.listLoading = false;
-
           const message: string = (payload as any)?.error ?? error?.message;
           console.error(
             message || `unknown error for request ${meta?.requestId}`,
@@ -75,7 +95,7 @@ export const conversationsSlice = createSlice({
   },
 });
 
-export const { clearAllMessages } = conversationsSlice.actions;
+export const { clearAllConversations } = conversationsSlice.actions;
 
 export const getConversationRoot = (state: RootState) =>
   state.main.conversations;

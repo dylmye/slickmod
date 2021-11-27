@@ -6,3 +6,6 @@ export const GET_REDDIT_MOD_SRS = `${ROOT}accounts/getRedditModSrs`;
 
 // conversations
 export const GET_REDDIT_MOD_CONVERSATIONS = `${ROOT}conversations/getRedditModConversations`;
+
+// thread
+export const GET_REDDIT_MOD_THREAD = `${ROOT}thread/getRedditModThread`;

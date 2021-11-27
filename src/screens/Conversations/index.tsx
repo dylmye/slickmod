@@ -4,47 +4,53 @@ import {
   ListRenderItem,
   RefreshControl,
   StyleSheet,
-  TextStyle,
   ViewStyle,
 } from "react-native";
-import { Conversation } from "types";
+import { FAB, List, useTheme } from "react-native-paper";
+import { useNavigation } from "@react-navigation/core";
 
+import { Conversation } from "types";
 import { View } from "components/Themed";
 import { useAppDispatch, useAppSelector } from "hooks/redux";
 import {
-  clearAllMessages,
+  clearAllConversations,
   fetchConversations,
   getConversations,
   getConversationsLoading,
 } from "features/ConversationList/slice";
-import { List } from "react-native-paper";
 
 interface Styles {
   container: ViewStyle;
-  listItemTitle: TextStyle;
+  composeFab: ViewStyle;
 }
 
 const styles = StyleSheet.create<Styles>({
   container: {
     flex: 1,
   },
-  listItemTitle: {
-    color: "#ffffff",
+  composeFab: {
+    position: "absolute",
+    margin: 16,
+    right: 0,
+    bottom: 0,
   },
 });
 
 const Conversations = () => {
   const dispatch = useAppDispatch();
+  const navigation = useNavigation();
+  const theme = useTheme();
   const conversations = useAppSelector(getConversations);
   const loading = useAppSelector(getConversationsLoading);
-  const clearMessages = () => dispatch(clearAllMessages());
+  const clearMessages = () => dispatch(clearAllConversations());
   const fetchConvos = () => dispatch(fetchConversations());
 
   const renderConversation: ListRenderItem<Conversation> = ({ item }) => (
     <List.Item
       title={item.subject}
       description={item.messageSnippet}
-      titleStyle={styles.listItemTitle}
+      titleStyle={{ color: theme.colors.text }}
+      onPress={() => navigation.navigate("Thread", { id: item.id })}
     />
   );
 
@@ -68,7 +74,10 @@ const Conversations = () => {
         refreshControl={refreshControl}
         data={conversations}
         renderItem={renderConversation}
+        onEndReached={fetchConvos}
+        onEndReachedThreshold={0.1}
       />
+      <FAB icon="send" style={styles.composeFab} label="Compose" />
     </View>
   );
 };

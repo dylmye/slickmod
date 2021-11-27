@@ -20,6 +20,7 @@ import type { PersistConfig } from "redux-persist/es/types";
 
 import accountReducer from "features/Accounts/slice";
 import conversationsReducer from "features/ConversationList/slice";
+import threadReducer from "features/Thread/slice";
 
 const persistRootStoreConfig: PersistConfig<any> = {
   key: "root",
@@ -39,6 +40,7 @@ const rootReducer = persistReducer(
   combineReducers({
     main: combineReducers({
       conversations: conversationsReducer,
+      thread: threadReducer,
     }),
     accounts: persistReducer(persistAccountStoreConfig, accountReducer),
   }),

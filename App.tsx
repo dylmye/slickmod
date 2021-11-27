@@ -8,6 +8,7 @@ import { Colors } from "react-native/Libraries/NewAppScreen";
 
 import { store, persistor } from "store";
 import Navigation from "navigation";
+import getTheme from "utils/getTheme";
 
 const warningsToIgnore = [
   // cause: react-native-flipper. see: https://github.com/facebook/flipper/issues/2707
@@ -18,20 +19,22 @@ LogBox.ignoreLogs(warningsToIgnore);
 
 const App = () => {
   const colourScheme = useColorScheme();
-  const isDarkMode = useColorScheme() === "dark";
+  const theme = getTheme(colourScheme);
 
   const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+    backgroundColor: theme.colors.background,
   };
+
+  const statusBarColour = theme.dark ? Colors.darker : theme.colors.primary;
 
   return (
     <ReduxProvider store={store}>
       <PersistGate persistor={persistor}>
         <SafeAreaProvider style={backgroundStyle}>
-          <PaperProvider>
-            <Navigation colorScheme={colourScheme} />
+          <PaperProvider theme={theme}>
+            <Navigation theme={theme} />
             <StatusBar
-              backgroundColor={isDarkMode ? Colors.darker : "#7193FF"}
+              backgroundColor={statusBarColour}
               barStyle="light-content"
               hidden={false}
             />

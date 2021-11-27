@@ -15,7 +15,7 @@ import {
 } from "features/Accounts/slice";
 import { version as appVersion } from "../../package.json";
 import oauthConfig from "screens/Accounts/config";
-import { store } from "store";
+import { RootState, store } from "store";
 
 const HEADERS: Record<string, string> = {
   "User-Agent": `${Platform.OS}:com.slickmod:${appVersion} (by github.com/dylmye)`,
@@ -37,7 +37,8 @@ export const config = ({
     "Content-Type": "application/json",
     ...extraHeaders,
   },
-  data: data ?? params,
+  data,
+  params,
   method,
   skipAuthRefresh,
 });
@@ -111,24 +112,44 @@ export const attemptRequest = async <T>(rq: RequestObject): Promise<T> => {
  * Creates a request that can be handled by redux slices
  * @template T The shape of the response expected from the API request
  * @param actionType The Redux action name, unique to this action
- * @param requestConfig Path and any error/config overrides
- * @param extraConfigParams Any extra axios configs and overrides
+ * @param requestConfig Path and any error/config overrides. Can be an object or a function passed the fn params (typed P) and state
+ * @param extraConfigParams Any extra axios configs and overrides. Can be an object or a function passed the fn params (typed P) and state
  * @returns The createAsyncThunk for the request specified
  */
-export const attemptRequestThunk = <T = any>(
+export const attemptRequestThunk = <T = any, P = void>(
   actionType: string,
-  requestConfig: RequestObject,
-  extraConfigParams?: Partial<Record<keyof ApiRequestConfig, any>>,
+  requestConfig:
+    | RequestObject
+    | ((params: P, state: RootState) => RequestObject),
+  extraConfigParams?:
+    | Partial<Record<keyof ApiRequestConfig, any>>
+    | ((
+        params: P,
+        state: RootState,
+      ) => Partial<Record<keyof ApiRequestConfig, any>>),
 ) =>
-  createAsyncThunk(actionType, async (_, { getState, rejectWithValue }) => {
-    const active = getActiveAccount(getState());
-    if (!active) {
-      return rejectWithValue({ error: "No active user ID available" });
-    }
+  createAsyncThunk<T, P>(
+    actionType,
+    async (params, { getState, rejectWithValue }) => {
+      const active = getActiveAccount(getState());
+      if (!active) {
+        return rejectWithValue({ error: "No active user ID available" });
+      }
 
-    return await attemptRequest<T>({
-      onError: rejectWithValue,
-      config: config({ ...extraConfigParams, bearer: active.bearerToken }),
-      ...requestConfig,
-    });
-  });
+      const finalRequestObject: RequestObject =
+        typeof requestConfig === "function"
+          ? requestConfig(params, getState())
+          : requestConfig;
+
+      const finalConfig =
+        typeof extraConfigParams === "function"
+          ? extraConfigParams(params, getState())
+          : extraConfigParams;
+
+      return await attemptRequest<T>({
+        onError: rejectWithValue,
+        config: config({ ...finalConfig, bearer: active.bearerToken }),
+        ...finalRequestObject,
+      });
+    },
+  );

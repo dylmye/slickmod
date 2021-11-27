@@ -2,6 +2,7 @@ import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { MainStackParamList } from "types";
 import Conversations from "screens/Conversations";
+import Thread from "screens/Thread";
 
 const MainStack = createStackNavigator<MainStackParamList>();
 
@@ -12,7 +13,11 @@ const MainNavigator = () => (
       component={Conversations}
       options={{ headerTitle: "All Subreddits" }}
     />
-    {/* Conversation */}
+    <MainStack.Screen
+      name="Thread"
+      component={Thread}
+      options={{ headerTitle: "Conversation" }}
+    />
     {/* Settings */}
   </MainStack.Navigator>
 );

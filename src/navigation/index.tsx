@@ -1,14 +1,9 @@
 import React, { useMemo } from "react";
-import {
-  NavigationContainer,
-  DefaultTheme,
-  DarkTheme,
-} from "@react-navigation/native";
+import { NavigationContainer } from "@react-navigation/native";
 import {
   createNativeStackNavigator,
   NativeStackNavigationOptions,
 } from "react-native-screens/native-stack";
-import { ColorSchemeName } from "react-native";
 
 import NotFoundScreen from "screens/NotFoundScreen";
 import { Account, RootStackParamList } from "types";
@@ -17,15 +12,14 @@ import UnauthNavigator from "./UnauthNavigator";
 import LinkingConfiguration from "./LinkingConfiguration";
 import { getAccounts } from "features/Accounts/slice";
 import MainNavigator from "./MainNavigator";
+import { CombinedTheme } from "utils/getTheme";
 
 // this project uses react-native-screens,which doesn't
 // need setup. see more here:
 // https://reactnavigation.org/docs/react-native-screens
 
-const Navigation = ({ colorScheme }: { colorScheme: ColorSchemeName }) => (
-  <NavigationContainer
-    linking={LinkingConfiguration}
-    theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+const Navigation = ({ theme }: { theme: CombinedTheme }) => (
+  <NavigationContainer linking={LinkingConfiguration} theme={theme}>
     <RootNavigator />
   </NavigationContainer>
 );

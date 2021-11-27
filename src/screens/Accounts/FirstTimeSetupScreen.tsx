@@ -17,6 +17,18 @@ interface Styles {
   title: TextStyle;
 }
 
+const styles: Styles = StyleSheet.create<Styles>({
+  container: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+});
+
 const FirstTimeSetupScreen = () => {
   const dispatch = useDispatch();
 
@@ -55,17 +67,5 @@ const FirstTimeSetupScreen = () => {
     </View>
   );
 };
-
-const styles: Styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-});
 
 export default FirstTimeSetupScreen;

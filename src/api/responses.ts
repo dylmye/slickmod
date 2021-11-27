@@ -83,3 +83,55 @@ export interface ModConversationsResponseMessage {
   bodyMarkdown: string;
   id: string;
 }
+
+export interface RecentItemBase {
+  date: string;
+  permalink: string;
+}
+
+export interface ModThreadResponseRecentComment extends RecentItemBase {
+  comment: string;
+  title: string;
+}
+
+export interface ModThreadResponseRecentConvo extends RecentItemBase {
+  id: string;
+  subject: string;
+}
+
+export interface ModThreadResponseRecentPost extends RecentItemBase {
+  title: string;
+}
+
+export interface ModThreadResponseUser {
+  approveStatus: {
+    isApproved: boolean;
+  };
+  banStatus: {
+    endDate: string | null;
+    isBanned: boolean;
+    isPermanent: boolean;
+    reason: string;
+  };
+  created: string;
+  id: string;
+  isShadowBanned: boolean;
+  isSuspended: boolean;
+  muteStatus: {
+    endDate: string | null;
+    isMuted: boolean;
+    muteCount: number;
+    reason: string;
+  };
+  name: string;
+  recentComments: Record<string, ModThreadResponseRecentComment>;
+  recentConvos: Record<string, ModThreadResponseRecentConvo>;
+  recentPosts: Record<string, ModThreadResponseRecentPost>;
+}
+
+export interface ModThreadResponse {
+  conversation: ModConversationsResponseItem;
+  messages: Record<string, ModConversationsResponseMessage>;
+  modActions: any;
+  user: ModThreadResponseUser;
+}

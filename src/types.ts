@@ -14,7 +14,9 @@ export type UnauthStackParamList = {
 
 export type MainStackParamList = {
   Conversations: undefined;
-  Conversation: undefined;
+  Thread: {
+    id: string;
+  };
   Settings: undefined;
 };
 
@@ -71,10 +73,10 @@ export interface ApiRequestConfig {
 
 export interface SlickmodAxiosRequestConfig extends AxiosRequestConfig {
   skipAuthRefresh?: boolean;
-};
+}
 
 export interface RequestObject {
   path: string;
   config?: SlickmodAxiosRequestConfig;
-  onError?: ({ error: string }: any) => any,
+  onError?: ({ error: string }: any) => any;
 }
