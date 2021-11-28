@@ -1,10 +1,18 @@
 import React, { useEffect } from "react";
-import { FlatList, StyleSheet, View, ViewStyle } from "react-native";
+import { FlatList, ListRenderItem, StyleSheet, ViewStyle } from "react-native";
 import { StackScreenProps } from "@react-navigation/stack";
+import { Divider } from "react-native-paper";
 
 import { MainStackParamList } from "types";
-import { fetchThreadById } from "features/Thread/slice";
-import { useAppDispatch } from "hooks/redux";
+import {
+  clearActiveThread,
+  fetchThreadById,
+  getActiveThread,
+} from "features/Thread/slice";
+import { useAppDispatch, useAppSelector } from "hooks/redux";
+import { ModConversationsResponseMessage } from "api/responses";
+import { View } from "components/Themed";
+import ThreadItem from "components/ThreadItem";
 
 interface Styles {
   container: ViewStyle;
@@ -16,20 +24,32 @@ const styles = StyleSheet.create<Styles>({
   },
 });
 
-const Thread = ({
-  navigation,
-  route,
-}: StackScreenProps<MainStackParamList, "Thread">) => {
+const Thread = ({ route }: StackScreenProps<MainStackParamList, "Thread">) => {
   const { id } = route.params;
   const dispatch = useAppDispatch();
+  const thread = useAppSelector(getActiveThread);
 
-  console.log(id);
+  const renderThreadPart: ListRenderItem<ModConversationsResponseMessage> = ({
+    item,
+  }) => <ThreadItem thread={item} />;
 
   useEffect(() => {
     dispatch(fetchThreadById({ id }));
+
+    return () => {
+      dispatch(clearActiveThread());
+    };
   }, []);
 
-  return <View style={styles.container}>{/* <FlatList /> */}</View>;
+  return (
+    <View style={styles.container}>
+      <FlatList<ModConversationsResponseMessage>
+        data={thread}
+        renderItem={renderThreadPart}
+        ItemSeparatorComponent={Divider}
+      />
+    </View>
+  );
 };
 
 export default Thread;

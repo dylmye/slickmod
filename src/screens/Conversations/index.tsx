@@ -4,9 +4,10 @@ import {
   ListRenderItem,
   RefreshControl,
   StyleSheet,
+  TextStyle,
   ViewStyle,
 } from "react-native";
-import { FAB, List, useTheme } from "react-native-paper";
+import { FAB, List, Text, useTheme } from "react-native-paper";
 import { useNavigation } from "@react-navigation/core";
 
 import { Conversation } from "types";
@@ -22,6 +23,8 @@ import {
 interface Styles {
   container: ViewStyle;
   composeFab: ViewStyle;
+  contentContainer: ViewStyle;
+  emptyContainer: ViewStyle;
 }
 
 const styles = StyleSheet.create<Styles>({
@@ -34,6 +37,14 @@ const styles = StyleSheet.create<Styles>({
     right: 0,
     bottom: 0,
   },
+  contentContainer: {
+    flexGrow: 1,
+  },
+  emptyContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    flex: 1,
+  },
 });
 
 const Conversations = () => {
@@ -45,23 +56,30 @@ const Conversations = () => {
   const clearMessages = () => dispatch(clearAllConversations());
   const fetchConvos = () => dispatch(fetchConversations());
 
+  const titleStyle: TextStyle = { color: theme.colors.text };
+
+  const onRefresh = () => {
+    clearMessages();
+    fetchConvos();
+  };
+
   const renderConversation: ListRenderItem<Conversation> = ({ item }) => (
     <List.Item
       title={item.subject}
       description={item.messageSnippet}
-      titleStyle={{ color: theme.colors.text }}
+      titleStyle={titleStyle}
       onPress={() => navigation.navigate("Thread", { id: item.id })}
     />
   );
 
   const refreshControl = (
-    <RefreshControl
-      refreshing={loading}
-      onRefresh={() => {
-        clearMessages();
-        fetchConvos();
-      }}
-    />
+    <RefreshControl refreshing={loading} onRefresh={onRefresh} />
+  );
+
+  const EmptyView = (
+    <View style={styles.emptyContainer}>
+      <Text>Nothing to see here</Text>
+    </View>
   );
 
   useEffect(() => {
@@ -73,8 +91,10 @@ const Conversations = () => {
       <FlatList<Conversation>
         refreshControl={refreshControl}
         data={conversations}
+        contentContainerStyle={styles.contentContainer}
         renderItem={renderConversation}
         onEndReached={fetchConvos}
+        ListEmptyComponent={EmptyView}
         onEndReachedThreshold={0.1}
       />
       <FAB icon="send" style={styles.composeFab} label="Compose" />

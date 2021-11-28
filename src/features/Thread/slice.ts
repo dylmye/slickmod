@@ -1,21 +1,20 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createSelector } from "@reduxjs/toolkit";
 import { GET_REDDIT_MOD_THREAD } from "api/actionTypes";
 import { attemptRequestThunk } from "api/api";
-import {
-  ModConversationsResponseItem,
-  ModConversationsResponseMessage,
-  ModThreadResponse,
-} from "api/responses";
+import { ModConversationsResponseItem, ModThreadResponse } from "api/responses";
+import { ACTION_TYPE_MESSAGES } from "constants/ActionTypeIds";
 import { RootState } from "store";
+import { ConversationItem } from "types";
+import { sortDateTimeStamps } from "utils/dates";
 
 interface ThreadState {
-  activeThread: Record<string, ModConversationsResponseMessage>;
+  activeThread: ConversationItem[];
   meta: ModConversationsResponseItem | null;
   loading: boolean;
 }
 
 const initialState: ThreadState = {
-  activeThread: {},
+  activeThread: [],
   meta: null,
   loading: false,
 };
@@ -44,8 +43,38 @@ export const threadSlice = createSlice({
         state.loading = true;
       })
       .addCase(fetchThreadById.fulfilled, (state, { payload }) => {
-        state.activeThread = payload.messages;
-        state.meta = payload.conversation;
+        if (payload.messages && Object.keys(payload.messages).length) {
+          const messages: ConversationItem[] = Object.values(
+            payload.messages,
+          ).map(x => ({
+            id: x.id,
+            author: x.author.name,
+            isMod: x.author.isMod,
+            isAdmin: x.author.isAdmin,
+            isOp: x.author.isOp,
+            date: x.date,
+            type: "Message",
+            message: x.body,
+          }));
+          const actions: ConversationItem[] = Object.values(
+            payload.modActions,
+          ).map(x => ({
+            id: x.id,
+            author: x.author.name,
+            isMod: x.author.isMod,
+            isAdmin: x.author.isAdmin,
+            isOp: false,
+            date: x.date,
+            type: "Action",
+            message:
+              ACTION_TYPE_MESSAGES[x.actionTypeId] ?? "did something unknown",
+          }));
+
+          state.activeThread = [...messages, ...actions].sort((a, b) =>
+            sortDateTimeStamps(a.date, b.date),
+          );
+          state.meta = payload.conversation;
+        }
         state.loading = false;
       })
       .addCase(fetchThreadById.rejected, (state, { payload, error, meta }) => {
@@ -62,7 +91,10 @@ export const { clearActiveThread } = threadSlice.actions;
 
 export const getThreadRoot = (state: RootState) => state.main.thread;
 
-// export const getActiveThread = createSelector<RootState, ThreadState, any>(
-// >(getThreadRoot, ({ activeThread }) => activeThread);
+export const getActiveThread = createSelector<
+  RootState,
+  ThreadState,
+  ConversationItem[]
+>(getThreadRoot, ({ activeThread }) => activeThread);
 
 export default threadSlice.reducer;

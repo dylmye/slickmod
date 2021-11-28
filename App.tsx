@@ -9,11 +9,9 @@ import { Colors } from "react-native/Libraries/NewAppScreen";
 import { store, persistor } from "store";
 import Navigation from "navigation";
 import getTheme from "utils/getTheme";
+import { colourPrimaryDark } from "constants/Colours";
 
-const warningsToIgnore = [
-  // cause: react-native-flipper. see: https://github.com/facebook/flipper/issues/2707
-  "`new NativeEventEmitter()` was called with a non-null argument without the required `",
-];
+const warningsToIgnore: string[] = [];
 
 LogBox.ignoreLogs(warningsToIgnore);
 
@@ -25,7 +23,7 @@ const App = () => {
     backgroundColor: theme.colors.background,
   };
 
-  const statusBarColour = theme.dark ? Colors.darker : theme.colors.primary;
+  const statusBarColour = theme.dark ? Colors.darker : colourPrimaryDark;
 
   return (
     <ReduxProvider store={store}>

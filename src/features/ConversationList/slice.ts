@@ -74,7 +74,7 @@ export const conversationsSlice = createSlice({
           }));
 
         state.list = [...state.list, ...mappedResults];
-        const lastKey = state.list[state.list.length - 1].id ?? state.lastKey;
+        const lastKey = state.list[state.list.length - 1]?.id ?? state.lastKey;
         state.lastKey = lastKey;
         state.listFilters = {
           ...(state.listFilters ?? {}),

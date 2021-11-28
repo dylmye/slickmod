@@ -5,6 +5,8 @@
  * a response that is an array.
  */
 
+import { ACTION_TYPE_IDS } from "constants/ActionTypeIds";
+
 // https://www.reddit.com/dev/api#GET_api_v1_me
 export interface MeResponse {
   id: string;
@@ -129,9 +131,23 @@ export interface ModThreadResponseUser {
   recentPosts: Record<string, ModThreadResponseRecentPost>;
 }
 
+export interface ModThreadActionItem {
+  actionTypeId: ACTION_TYPE_IDS;
+  author: {
+    id: number;
+    isAdmin: boolean;
+    isDeleted: boolean;
+    isHidden: boolean;
+    isMod: boolean;
+    name: string;
+  };
+  date: string;
+  id: string;
+}
+
 export interface ModThreadResponse {
   conversation: ModConversationsResponseItem;
   messages: Record<string, ModConversationsResponseMessage>;
-  modActions: any;
+  modActions: Record<string, ModThreadActionItem>;
   user: ModThreadResponseUser;
 }

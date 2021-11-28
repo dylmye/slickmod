@@ -49,6 +49,17 @@ export type Conversation = {
   lastUpdated: string | null;
 };
 
+export interface ConversationItem {
+  id: string;
+  author: string;
+  isMod: boolean;
+  isAdmin: boolean;
+  isOp: boolean;
+  date: string;
+  type: "Message" | "Action";
+  message: string;
+}
+
 // authentication, api infra
 
 export interface TempAuthAccount {
