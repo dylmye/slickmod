@@ -7,7 +7,8 @@ import {
   TextStyle,
   ViewStyle,
 } from "react-native";
-import { FAB, List, Text, useTheme } from "react-native-paper";
+import { Divider, FAB, List, Text, useTheme } from "react-native-paper";
+import dayjs from "dayjs";
 import { useNavigation } from "@react-navigation/core";
 
 import { Conversation } from "types";
@@ -25,6 +26,7 @@ interface Styles {
   composeFab: ViewStyle;
   contentContainer: ViewStyle;
   emptyContainer: ViewStyle;
+  date: TextStyle;
 }
 
 const styles = StyleSheet.create<Styles>({
@@ -44,6 +46,11 @@ const styles = StyleSheet.create<Styles>({
     alignItems: "center",
     justifyContent: "center",
     flex: 1,
+  },
+  date: {
+    marginTop: 8,
+    position: "absolute",
+    right: 4,
   },
 });
 
@@ -67,8 +74,13 @@ const Conversations = () => {
     <List.Item
       title={item.subject}
       description={item.messageSnippet}
+      descriptionNumberOfLines={2}
       titleStyle={titleStyle}
+      titleNumberOfLines={1}
       onPress={() => navigation.navigate("Thread", { id: item.id })}
+      right={props => (
+        <Text style={styles.date}>{dayjs(item.lastUpdated).format("L")}</Text>
+      )}
     />
   );
 
@@ -96,6 +108,7 @@ const Conversations = () => {
         onEndReached={fetchConvos}
         ListEmptyComponent={EmptyView}
         onEndReachedThreshold={0.1}
+        ItemSeparatorComponent={Divider}
       />
       <FAB icon="send" style={styles.composeFab} label="Compose" />
     </View>

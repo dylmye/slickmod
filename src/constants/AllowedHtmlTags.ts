@@ -1,3 +1,4 @@
+/** To be used in limiting input/output rendering */
 const ALLOWED_HTML_TAGS: string[] = [
   "div",
   "p",

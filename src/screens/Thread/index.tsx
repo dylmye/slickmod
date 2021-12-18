@@ -3,14 +3,13 @@ import { FlatList, ListRenderItem, StyleSheet, ViewStyle } from "react-native";
 import { StackScreenProps } from "@react-navigation/stack";
 import { Divider } from "react-native-paper";
 
-import { MainStackParamList } from "types";
+import { ConversationItem, MainStackParamList } from "types";
 import {
   clearActiveThread,
   fetchThreadById,
   getActiveThread,
 } from "features/Thread/slice";
 import { useAppDispatch, useAppSelector } from "hooks/redux";
-import { ModConversationsResponseMessage } from "api/responses";
 import { View } from "components/Themed";
 import ThreadItem from "components/ThreadItem";
 
@@ -29,9 +28,9 @@ const Thread = ({ route }: StackScreenProps<MainStackParamList, "Thread">) => {
   const dispatch = useAppDispatch();
   const thread = useAppSelector(getActiveThread);
 
-  const renderThreadPart: ListRenderItem<ModConversationsResponseMessage> = ({
-    item,
-  }) => <ThreadItem thread={item} />;
+  const renderThreadPart: ListRenderItem<ConversationItem> = ({ item }) => (
+    <ThreadItem thread={item} />
+  );
 
   useEffect(() => {
     dispatch(fetchThreadById({ id }));
@@ -43,7 +42,7 @@ const Thread = ({ route }: StackScreenProps<MainStackParamList, "Thread">) => {
 
   return (
     <View style={styles.container}>
-      <FlatList<ModConversationsResponseMessage>
+      <FlatList<ConversationItem>
         data={thread}
         renderItem={renderThreadPart}
         ItemSeparatorComponent={Divider}

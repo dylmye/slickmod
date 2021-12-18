@@ -16,6 +16,12 @@ import {
   colourWhite,
 } from "constants/Colours";
 import { ConversationItem } from "types";
+import dayjs from "dayjs";
+import isToday from "dayjs/plugin/isToday";
+import localizedFormat from "dayjs/plugin/localizedFormat";
+
+dayjs.extend(isToday);
+dayjs.extend(localizedFormat);
 
 interface Styles {
   container: ViewStyle;
@@ -60,6 +66,7 @@ interface MenuProps {
   onShow: () => void;
   onDismiss: () => void;
   author: string;
+  isMutable: boolean;
   style?: StyleProp<ViewStyle>;
 }
 
@@ -68,6 +75,7 @@ const TitleMenu = ({
   onShow,
   onDismiss,
   author,
+  isMutable,
   style,
 }: MenuProps) => (
   <Menu
@@ -86,7 +94,8 @@ const TitleMenu = ({
       accessibilityLabel="Navigate to user's profile"
       onPress={() => Linking.openURL(`https://reddit.com/u/${author}`)}
     />
-    <Menu.Item title="Mute User" />
+    {/* {isMutable && <Menu.Item title="Mute User" />}
+    {isMutable && <Menu.Item title="Approve User" />} */}
   </Menu>
 );
 
@@ -96,12 +105,12 @@ interface Props {
 
 const ThreadItem = ({ thread }: Props) => {
   const date = useMemo(() => {
-    const d = new Date(thread.date);
-    if (d.getDate() === new Date().getDate()) {
-      return "Today";
+    const d = dayjs(thread.date);
+    if (d.isToday()) {
+      return "Today, " + d.format("LT");
     }
 
-    return d.toLocaleDateString();
+    return d.format("l");
   }, [thread.date]);
   const [menuVisible, setMenuVisible] = useState(false);
 
@@ -111,9 +120,12 @@ const ThreadItem = ({ thread }: Props) => {
     ? colourError
     : colourWhite;
 
-  const showAuthorMenu = thread.author?.toLowerCase() !== "automoderator";
+  const isActionItem = thread.type === "Action";
 
-  if (thread.type === "Action") {
+  const showAuthorMenu =
+    !isActionItem && thread.author?.toLowerCase() !== "automoderator";
+
+  if (isActionItem) {
     return (
       <View style={styles.container}>
         <View style={styles.title}>
@@ -135,10 +147,11 @@ const ThreadItem = ({ thread }: Props) => {
   return (
     <View style={styles.container}>
       <View style={styles.title}>
-        <View style={styles.authorContainer}>
+        <View style={isActionItem ? styles.action : styles.authorContainer}>
           <Text style={[styles.author, { color: authorColour }]}>
             {thread.author}
           </Text>
+          {isActionItem && <Text> {thread.message}</Text>}
           <Text>
             {" \u2022 "}
             {date}
@@ -150,10 +163,11 @@ const ThreadItem = ({ thread }: Props) => {
             onShow={() => setMenuVisible(true)}
             onDismiss={() => setMenuVisible(false)}
             author={thread.author}
+            isMutable={!thread.isMod && !thread.isAdmin}
           />
         )}
       </View>
-      <HTMLView value={thread.message} />
+      {!isActionItem && <HTMLView value={thread.message} />}
     </View>
   );
 };

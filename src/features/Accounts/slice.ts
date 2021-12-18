@@ -4,6 +4,8 @@ import {
   PayloadAction,
   current,
 } from "@reduxjs/toolkit";
+import dayjs from "dayjs";
+
 import { RootState } from "store";
 import { Account, RefreshAuthAccount, Subreddit, TempAuthAccount } from "types";
 import { attemptRequestThunk } from "api/api";
@@ -41,7 +43,7 @@ export const accountsSlice = createSlice({
     addAccount: (state, { payload }: PayloadAction<TempAuthAccount>) => {
       state.list.temp = {
         ...payload,
-        createdUtc: new Date().toISOString(),
+        createdUtc: dayjs().toISOString(),
       };
       state.activeUserId = "temp";
     },
