@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { FlatList, ListRenderItem, StyleSheet, ViewStyle } from "react-native";
 import { StackScreenProps } from "@react-navigation/stack";
-import { Divider } from "react-native-paper";
+import { Divider, FAB } from "react-native-paper";
 
 import { ConversationItem, MainStackParamList } from "types";
 import {
@@ -15,11 +15,18 @@ import ThreadItem from "components/ThreadItem";
 
 interface Styles {
   container: ViewStyle;
+  composeFab: ViewStyle;
 }
 
 const styles = StyleSheet.create<Styles>({
   container: {
     flex: 1,
+  },
+  composeFab: {
+    position: "absolute",
+    margin: 16,
+    right: 0,
+    bottom: 0,
   },
 });
 
@@ -47,6 +54,7 @@ const Thread = ({ route }: StackScreenProps<MainStackParamList, "Thread">) => {
         renderItem={renderThreadPart}
         ItemSeparatorComponent={Divider}
       />
+      <FAB icon="send" style={styles.composeFab} label="Reply" />
     </View>
   );
 };
