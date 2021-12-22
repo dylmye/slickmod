@@ -1,5 +1,12 @@
 import React from "react";
-import { StatusBar, useColorScheme, LogBox } from "react-native";
+import {
+  StatusBar,
+  useColorScheme,
+  LogBox,
+  StatusBarStyle,
+  Platform,
+  ColorValue,
+} from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Provider as PaperProvider } from "react-native-paper";
 import { Provider as ReduxProvider } from "react-redux";
@@ -23,7 +30,11 @@ const App = () => {
     backgroundColor: theme.colors.background,
   };
 
-  const statusBarColour = theme.dark ? Colors.darker : colourPrimaryDark;
+  const statusBarColour: ColorValue = theme.dark
+    ? Colors.darker
+    : colourPrimaryDark;
+  const statusBarStyle: StatusBarStyle =
+    !theme.dark && Platform.OS === "ios" ? "dark-content" : "light-content";
 
   return (
     <ReduxProvider store={store}>
@@ -33,7 +44,7 @@ const App = () => {
             <Navigation theme={theme} />
             <StatusBar
               backgroundColor={statusBarColour}
-              barStyle="light-content"
+              barStyle={statusBarStyle}
               hidden={false}
             />
           </PaperProvider>

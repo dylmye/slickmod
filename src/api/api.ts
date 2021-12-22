@@ -146,9 +146,15 @@ export const attemptRequestThunk = <T = any, P = void>(
           ? extraConfigParams(params, getState())
           : extraConfigParams;
 
+      const c = config({ ...finalConfig, bearer: active.bearerToken });
+
+      if (c.method === "GET") {
+        delete c.data; // iOS rejects data for GET even when null
+      }
+
       return await attemptRequest<T>({
         onError: rejectWithValue,
-        config: config({ ...finalConfig, bearer: active.bearerToken }),
+        config: c,
         ...finalRequestObject,
       });
     },
