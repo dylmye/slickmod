@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { Divider, FAB, List, Text, useTheme } from "react-native-paper";
 import dayjs from "dayjs";
+import localizedFormat from "dayjs/plugin/localizedFormat";
 import { useNavigation } from "@react-navigation/core";
 
 import { Conversation } from "types";
@@ -20,6 +21,8 @@ import {
   getConversations,
   getConversationsLoading,
 } from "features/ConversationList/slice";
+
+dayjs.extend(localizedFormat);
 
 interface Styles {
   container: ViewStyle;
@@ -48,9 +51,8 @@ const styles = StyleSheet.create<Styles>({
     flex: 1,
   },
   date: {
-    marginTop: 8,
-    position: "absolute",
-    right: 4,
+    marginTop: 4,
+    paddingRight: 4,
   },
 });
 
